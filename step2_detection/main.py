@@ -1,6 +1,8 @@
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 import urllib
+import numpy as np
+from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB,BernoulliNB
 from sklearn.tree import DecisionTreeClassifier
@@ -13,7 +15,7 @@ from sklearn import preprocessing
 # 加载数据
 def loadFile():
     badXss='./badx.txt'
-    goodXss='./goox.txt'
+    goodXss='./goodx.txt'
     bf=[x.strip().lower() for x in open(badXss,'r').readlines()]
     gf=[x.strip().lower() for x in open(goodXss,'r').readlines()]
     return bf,gf
@@ -65,14 +67,15 @@ def train(x,y):
            SVC(kernel='rbf', gamma=0.7, C=1),
            # GradientBoostingClassifier(param)  # 梯度提升树
            ]
-    NAME = ["多项式", "伯努利", "决策树", "随机森林", "线性回归", "linerSVC", "svc-rbf"]
+    NAME = ["多项式", "伯努利", "决策树", "随机森林", "linear regression", "linerSVC", "svc-rbf"]
     for model, modelName in zip(NBM, NAME):
+        x_train,y_train=shuffle(x_train,y_train)
         model.fit(x_train, y_train)
         pred = model.predict(x_test)
-        dts = len(np.where(pred == y_test)[0])/ len(y_test)
-        recall_rate=len(np.sum((y_test+pred)==0))/len(np.sum(y_test==0))
+        dts = len(np.where(pred == y_test))/ len(y_test)
+        # recall_rate=np.sum((y_test+pred)==0)/np.sum(y_test==0)
         print("{} 准确率:{:.5f}% ".format(modelName, dts * 100))  #准确率
-        print("{} 召回率:{:.5f}%".format(modelName,recall_rate))  #召回率
+        # print("{} 召回率:{:.5f}%".format(modelName,recall_rate))  #召回率
         joblib.dump(model, './model.pkl')  # 将模型保存到本地
 
 def predicts(x):
@@ -83,8 +86,10 @@ def run():
     badx, goodx = loadFile()
     goodx = MakeFeature(goodx)
     badx = MakeFeature(badx)
-    goody = [0] * len(goodx)
-    bady = [1] * len(badx)
+    # goody = [0] * len(goodx)
+    # bady = [1] * len(badx)
+    goody=np.zeros_like(goodx)
+    bady=np.ones_like(badx)
     min_max_scaler = preprocessing.MinMaxScaler()
     X_train_minmax =min_max_scaler.fit_transform(bady)
     x = np.array(goodx + badx).reshape(-1, 2)
