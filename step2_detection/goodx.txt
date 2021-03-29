@@ -1,0 +1,5 @@
+format=xml&platform=ppap&channel=withoutchannelfilename=sgim_eng.zip&h=B2EF665558623D671FC19AC78CA2F0F3&v=8.0.0.8381&ifauto=1
+
+    md5=d10015a0eb30bd33bb917e1d527c649num=8&PaperCode=600054daid=41&clientuin=1264523260
+
+    clientkey=00015947C124007000F19A1CB5D10832A25TAG=ieg.qqpenguin.desktopdaid=41&clientuin=1264523260
