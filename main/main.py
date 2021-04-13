@@ -12,6 +12,18 @@ from sklearn.svm import LinearSVC,SVC
 import joblib
 from sklearn import preprocessing
 
+
+def loadFeature():
+    toalList=[[],[],[]]
+    feature_list=['cn','s','cf']
+    for i in feature_list:
+        filename=feature_list[i]+"List"
+        with open("./"+filename+".txt") as file:
+            for line in file:
+                line=line.strip("\n")
+                totalList[i].append(line)
+    return totalList[0],totalList[1],totalList[2]
+
 # 加载数据
 def loadFile():
     badXss='./badx.txt'
@@ -21,24 +33,29 @@ def loadFile():
     return bf,gf
 
 # 特征工程
+
 def MakeFeature(x):
     """
-    charList is 关键词特征,markList is 关键符号特征
 
-    :param x:
-    :return:featureList
+    :param x: log.
+    :param cnList: connection_feature_List
+    :param sList: ssl_feature_List
+    :param cfList: certification_feature_List
+    :return:
     """
-    charList = ["οnmοuseοver=","οnlοad=", "οnerrοr=", "javascript","alert", "src=", "confirm", "onblur"]
-    markList = ["=", ":",">", "<", '"', "'", ")","(", "."]
+    cnList, sList, cfList=loadFeature()
     featureList = []
     for i in x:
-        char_count, mark_count = 0, 0
-        payload =urllib.parse.unquote(i.lower().strip())
-        for charts in charList:
-            char_count = payload.count(charts)+ char_count
-        for marks in markList:
-            mark_count = payload.count(marks) +mark_count
-        featureList.append([char_count,mark_count])
+        cn_count, s_count,cf_count= 0, 0,0
+        # payload =urllib.parse.unquote(i.lower().strip())  #仅适用于URL的解码
+        payload=...
+        for cn in cnList:
+            cn_count = payload.count(cn)+ cn_count
+        for s in sList:
+            s_count = payload.count(s) +s_count
+        for cf in cfList:
+            cf_count=payload.count(cf)+cf_count
+        featureList.append([cn_count,s_count,cf_count])
     return featureList
 
 # 训练
@@ -67,7 +84,7 @@ def train(x,y):
            SVC(kernel='rbf', gamma=0.7, C=1),
            # GradientBoostingClassifier(param)  # 梯度提升树
            ]
-    NAME = ["多项式", "伯努利", "决策树", "随机森林", "linear regression", "linerSVC", "svc-rbf"]
+    NAME = ["多项式贝叶斯", "伯努利贝叶斯", "Decision Tree", "Random Forest", "linear regression", "linerSVC", "svc-rbf"]
     for model, modelName in zip(NBM, NAME):
         x_train,y_train=shuffle(x_train,y_train)
         model.fit(x_train, y_train)
@@ -93,7 +110,7 @@ def run():
     min_max_scaler = preprocessing.MinMaxScaler()
     X_train_minmax =min_max_scaler.fit_transform(bady)
     x = np.array(goodx + badx).reshape(-1, 2)
-    y = np.array(goody + bady).reshape(-1, 1)
+    y = np.array(goody + bady).rreshape(-1, 1)
     train(x, y)
     testX =["<script>alert(1)</script>", "123123sadas","onloads2s", "scriptsad23asdasczxc","οnlοad=alert(1)"]
     x =MakeFeature(testX)
@@ -102,3 +119,6 @@ def run():
 
 if __name__=="__main__":
     run()
+
+
+# 明天修复数据集过少的问题
