@@ -11,6 +11,8 @@ With the popularity of HTTPS in recent years, the proportion of encrypted malici
  ![The proportion of malware](./Pictures/PieChart.png)
 
 The commonly used software encryption communication methods can be roughly divided into six types:
+
+
 |Type|Means of Attack|
 |-------|--------|
 |Trojan Horse|C&C direct connection,White stands hidden transfer,Others|
@@ -27,14 +29,16 @@ The commonly used software encryption communication methods can be roughly divid
 
 ### SpotLight
 
--The first domestic open source analysis and detection platform of encrypted malicious traffic based on machine learning method
--Considering the existing feature engineering as much as possible, and combining with NLP, a new feature engineering method different from word frequency (TF) is proposed
+- The first domestic open source analysis and detection platform of encrypted malicious traffic based on machine learning method
+
+- Considering the existing feature engineering as much as possible, and combining with NLP, a new feature engineering method different from word frequency (TF) is proposed
+
 ### Todolsit
 
--[] support for a custom neural network model (Deep is all you needed?)
--[] not limited to the keyword detection commonly used in the industry. The emotional analysis tools such as nltk are added to NLP to better reflect the statistical characteristics
--[] training of larger datasets, supporting relational databases, such as MySQL
--[] front end detection page based on the flask framework
+- [ ] support for a custom neural network model (Deep is all you needed?)
+- [ ] not limited to the keyword detection commonly used in the industry. The emotional analysis tools such as nltk are added to NLP to better reflect the statistical characteristics
+- [ ] training of larger datasets, supporting relational databases, such as MySQL
+- [ ] front end detection page based on the flask framework
 
 If you have any question or suggestion, Please email us :)
 
@@ -46,10 +50,6 @@ If you have any question or suggestion, Please email us :)
  
  You may install Winpcap,if you want to run the section of getting samples,by the way,it's easy to install the software.
 
-
-### Deployment procedure
-
-Easy to use.....
 
 CONECTION
 -----------

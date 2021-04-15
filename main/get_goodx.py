@@ -273,8 +273,8 @@ if __name__ == '__main__':
     host_ip = get_host_ip()
     host_name = get_host_name()
 
-    Sample_num=2  # 正样本的采样周期数
-    count=5 # 每次采集的数据包的个数
+    Sample_num=5  # 正样本的采样周期数
+    count=10 # 每次采集的数据包的个数
 
 
     print('------------------------------------------------------\r\n')
@@ -301,8 +301,9 @@ if __name__ == '__main__':
         for i in range(count):
             data=PD.ether_decode(package[i])
             with open('goodx.csv','a') as f:
-                [f.write("{0}:{1},".format(key,value)) for key,value in data.items()]
-                f.write("\n")
+                # [f.write("{0}:{1},".format(key,value)) for key,value in data.items()]
+                [f.write("{},".format(value)) for key,value in data.items()]
+                f.write("good\n")
         # print("已经抓取了{}个数据包".format(i*count))
 
 
