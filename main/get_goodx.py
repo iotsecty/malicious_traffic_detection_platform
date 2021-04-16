@@ -6,6 +6,7 @@ from __future__ import print_function
 import sys
 import socket
 import csv
+from  scapy.utils import corrupt_bytes
 
 # protocol目录
 PROTOCOL_PATH = './protocol'
@@ -297,7 +298,10 @@ if __name__ == '__main__':
 
     # 实时抓取流量数据并且每个数据包进行解析输出和上报
     for i in range(Sample_num):
-        package=sniff(iface=NETWORK_INTERFACE, count=count, store=1, prn=lambda x:x.summary())
+        load_layer('tls')
+        load_layer('ssl')  # 这两层专门用来监听HTTPS
+        # package=sniff(iface=NETWORK_INTERFACE, count=count, store=1, prn=lambda x:x.summary())
+        package=sniff(count=count, store=1, prn=lambda x:x.summary(),iface=NETWORK_INTERFACE)  # HTTPS的默认端口是443/TCP 443/UDP
         for i in range(count):
             data=PD.ether_decode(package[i])
             with open('goodx.csv','a') as f:
