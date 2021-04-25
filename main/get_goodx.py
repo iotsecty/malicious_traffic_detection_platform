@@ -7,9 +7,11 @@ import sys
 import socket
 import csv
 from  scapy.utils import corrupt_bytes
+from scapy.all import *
 
 # protocol目录
 PROTOCOL_PATH = './protocol'
+
 
 # 监听的网卡，在vmware里的网卡一般是eth30或者eth20,windows系统下需要自己查找，也可以为设置为None
 # NETWORK_INTERFACE = None
@@ -208,106 +210,116 @@ class PcapDecode:
         return data
 
 
-def get_host_ip():
-    """
-    查询本机ip地址
-    :return: ip
-    """
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('8.8.8.8', 80))
-        ip = s.getsockname()[0]
-    finally:
-        s.close()
+class GetGoodx():
+    def __init__(self,filename,sample_num,count):
+        self.Sample_num = sample_num  # 正样本的采样周期数
+        self.count = count  # 每次采集的数据包的个数
+        self.filename=filename # 存放数据的位置
+        self.host_ip = self.get_host_ip()
+        self.host_name = self.get_host_name()
 
-    return ip
+        self.check_env()  # 检查环境是否已经安装好
 
+    def get_host_ip(self):
+        """
+        查询本机ip地址
+        :return: ip
+        """
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect(('8.8.8.8', 80))
+            ip = s.getsockname()[0]
+        finally:
+            s.close()
 
-def get_host_name():
-    """
-    查询本机hostname，如果是：xxx.novalocal，则只获取xxx
-    """
-    hostname = socket.gethostname()
-    name = hostname.split('.')[0] if '.' in hostname else hostname
-    return name
-
-
-def handle_flow(obj, data):
-    # 解析流量数据
-    data1 = obj.ether_decode(data)
-    data2 = obj.ip_decode(data)
-    data3 = obj.tcp_decode(data,obj[IP])
-    data4 = obj.udp_decode(data,obj[IP])
-
-    data=dict(data1.items()+data2.items()+data3.items()+data4.items())
-    print(data)
-    return data
+        return ip
 
 
-def check_import(name):
-    try:
-        exec("import %s" % name)
+    def get_host_name(self):
+        """
+        查询本机hostname，如果是：xxx.novalocal，则只获取xxx
+        """
+        hostname = socket.gethostname()
+        name = hostname.split('.')[0] if '.' in hostname else hostname
+        return name
+
+
+    def handle_flow(self,obj, data):
+        # 解析流量数据
+        data1 = obj.ether_decode(data)
+        data2 = obj.ip_decode(data)
+        data3 = obj.tcp_decode(data,obj[IP])
+        data4 = obj.udp_decode(data,obj[IP])
+
+        data=dict(data1.items()+data2.items()+data3.items()+data4.items())
+        print(data)
+        return data
+
+
+    def check_import(self,name):
+        try:
+            exec("import %s" % name)
+            return 0, 'success'
+        except:
+            return 1, 'Python模块%s未安装' % name
+
+    def save_IP(self,package,filename_IP):
+        with open(filename_IP,'a') as f:
+            f.write("{} {}\n".format(package[IP].src,package[IP].dst))
+
+    def check_init(self):
+        if sys.version_info < (3, 0):
+            return 1, '该脚本只能在Python3下运行，请使用Python3运行该脚本'
+
+        for app_name in NEED_INSTALL:
+            (code, msg) = self.check_import(app_name)
+            if code:
+                return 1, msg
+            print('Python模块%s已安装' % app_name)
+
         return 0, 'success'
-    except:
-        return 1, 'Python模块%s未安装' % name
 
-def save_IP(package,filename_IP):
-    with open(filename_IP,'a') as f:
-        f.write("{} {}\n".format(package[IP].src,package[IP].dst))
-
-def check_init():
-    if sys.version_info < (3, 0):
-        return 1, '该脚本只能在Python3下运行，请使用Python3运行该脚本'
-
-    for app_name in NEED_INSTALL:
-        (code, msg) = check_import(app_name)
+    def check_env(self):
+        print('------------------------------------------------------\r\n')
+        print('开始检测是否安装依赖')
+        (code, msg) = self.check_init()
         if code:
-            return 1, msg
-        print('Python模块%s已安装' % app_name)
+            print(msg)
+            sys.exit(1)
 
-    return 0, 'success'
+        loop = None
+
+        print('------------------------------------------------------\r\n')
+        print('主机IP： ', self.host_ip)
+        print('主机名称：', self.host_name)
+        print('监听网卡：', NETWORK_INTERFACE)
+        print('------------------------------------------------------\r\n')
+        print('开始监控流量数据')
+        print('------------------------------------------------------\r\n')
+
+
+    def get(self):
+
+        PD = PcapDecode()
+
+
+        # 实时抓取流量数据并且每个数据包进行解析输出和上报
+        for i in range(self.Sample_num):
+            load_layer('tls')
+            load_layer('ssl')  # 这两层专门用来监听HTTPS
+            # package=sniff(iface=NETWORK_INTERFACE, count=self.count, store=1, prn=lambda x:x.summary())
+            package = sniff(count = self.count, store = 1, prn = lambda x: x.summary(),
+                            iface = NETWORK_INTERFACE)  # HTTPS的默认端口是443/TCP 443/UDP
+            for i in range(self.count):
+                data = PD.ether_decode(package[i])
+                with open(self.filename, 'a') as f:
+                    # [f.write("{0}:{1},".format(key, value)) for key, value in data.items()]
+                    [f.write("{},".format(value)) for key,value in data.items()]
+                    f.write("good\n")
+            # print("已经抓取了{}个数据包".format(i*self.count))
 
 
 if __name__ == '__main__':
-    PD = PcapDecode()
 
-    host_ip = get_host_ip()
-    host_name = get_host_name()
-
-    Sample_num=5  # 正样本的采样周期数
-    count=10 # 每次采集的数据包的个数
-
-
-    print('------------------------------------------------------\r\n')
-    print('开始检测是否安装依赖')
-    (code, msg) = check_init()
-    if code:
-        print(msg)
-        sys.exit(1)
-
-    loop = None
-    from scapy.all import *
-
-    print('------------------------------------------------------\r\n')
-    print('主机IP： ', host_ip)
-    print('主机名称：', host_name)
-    print('监听网卡：', NETWORK_INTERFACE)
-    print('------------------------------------------------------\r\n')
-    print('开始监控流量数据')
-    print('------------------------------------------------------\r\n')
-
-    # 实时抓取流量数据并且每个数据包进行解析输出和上报
-    for i in range(Sample_num):
-        load_layer('tls')
-        load_layer('ssl')  # 这两层专门用来监听HTTPS
-        # package=sniff(iface=NETWORK_INTERFACE, count=count, store=1, prn=lambda x:x.summary())
-        package=sniff(count=count, store=1, prn=lambda x:x.summary(),iface=NETWORK_INTERFACE)  # HTTPS的默认端口是443/TCP 443/UDP
-        for i in range(count):
-            data=PD.ether_decode(package[i])
-            with open('goodx.csv','a') as f:
-                # [f.write("{0}:{1},".format(key,value)) for key,value in data.items()]
-                [f.write("{},".format(value)) for key,value in data.items()]
-                f.write("good\n")
-        # print("已经抓取了{}个数据包".format(i*count))
-
-
+    get_goodx=GetGoodx('./goodx.csv',10,10)
+    get_goodx.get()
