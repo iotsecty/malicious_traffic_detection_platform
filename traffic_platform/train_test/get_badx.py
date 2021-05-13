@@ -3,10 +3,9 @@
 
 import scapy.all as scapy
 
-from get_goodx import PcapDecode
+from .get_goodx import PcapDecode
 
 NUM_BAD=100000 # 恶意流量样本的数量
-
 
 
 class GetBadx():
@@ -42,7 +41,6 @@ if __name__=="__main__":
     bad_filename='./badx.csv'
     bad_pcap_filename="../2018-05-03_win12.pcap"
     get_badx=GetBadx(bad_filename,bad_pcap_filename,10).get()
-
 
 
 ##另外两种读取pcap包的方式，限于规模较小的情况

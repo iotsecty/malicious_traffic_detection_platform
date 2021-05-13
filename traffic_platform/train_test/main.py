@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
 
-import urllib
 import numpy as np
+# from scapy.main import _validate_local
 from sklearn.utils import shuffle
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB,BernoulliNB
@@ -12,16 +12,57 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import LinearSVC,SVC
 import joblib
 from sklearn import preprocessing,model_selection
-from sklearn.metrics import confusion_matrix,classification_report
-
+# from sklearn.metrics import confusion_matrix,classification_report
+import matplotlib.pyplot as plt
 import warnings
+import os
+from .get_goodx import GetGoodx
+from .get_feature import GetFeature
+from .get_badx import GetBadx
+import pprint
+import argparse 
 
-from get_goodx import GetGoodx
-from get_feature import GetFeature
-from get_badx import GetBadx
+DATASET=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'dataset')
+GOOD_DATASET_PATH= os.path.join(DATASET,'goodx.csv')
+BAD_DATASET_PATH= os.path.join(DATASET, 'badx.csv')
+# BAD_PCAP_PATH=os.path.join(DATASET, "danger_pcap")
 
-good_filename='./goodx.csv'
-bad_filename='./badx.csv'
+DEFAULT_BAD_PCAP_PATH=os.path.join(os.path.dirname(os.path.realpath(__file__)), "danger_pcap\\2018-05-03_win12.pcap")
+
+def parse_args():
+    desc = "Malicious traffic detection paltform"
+    parser = argparse.ArgumentParser(description=desc)  
+
+    parser.add_argument('--updata_goodset',type=bool,default=False,help='是否抓取正常流量数据')
+    parser.add_argument('--updata_badset',type=bool,default=False,help='是否更新恶意流量数据')
+
+    parser.add_argument('--num_epoch',type=int,default=5,help='抓取数据流量的次数')
+    parser.add_argument('--num_ev',type=int,default=20,help='每次抓取流量包的数量')
+
+    parser.add_argument('--train',action='store_true',required=True,help='训练并输出结果')
+
+    # parser.add_argument('--good_dir',type=GOOD_DATASET_PATH,help='正常流量数据文件存放地址')
+    # parser.add_argument('--bad_dir',type=BAD_DATASET_PATH,help='恶意流量数据文件存放地址')
+    # parser.add_argument('--bad_pcap_dir',type=BAD_DATASET_PATH,default=DEFAULT_BAD_PCAP_PATH,help='恶意流量数据文件存放地址')
+    
+    parser.add_argument('--good_dir',type=str,default=str(GOOD_DATASET_PATH),help='正常流量数据文件存放地址')
+    parser.add_argument('--bad_dir',type=str,default=str(BAD_DATASET_PATH),help='恶意流量数据文件存放地址')
+    parser.add_argument('--bad_pcap_dir',type=str,default=str(DEFAULT_BAD_PCAP_PATH),help='恶意流量数据文件存放地址')
+
+    parser.add_argument('--ignore_warning',type=bool,default=True,help='是否忽略警告')
+
+    args=parser.parse_args()
+    validate_args(args)
+
+    return args
+
+def validate_args(args):
+    # 打印参数
+    print('validating arguments...')
+    pprint.pprint(args.__dict__)
+    if args.updata_badset:
+        assert os.path.exits(args.bad_pcap_dir),'请检查恶意流量pcap文件是否存在'
+
 
 def plot_confusion_mat(confusion_mat):
     # 注意必须是imshow()
@@ -79,13 +120,15 @@ def predicts(x):
     clf = joblib.load('./model.pkl')  # 加载已保存的模型
     return clf.predict(x)
 
-def run():
+def predicts_pcap(pcap_path):
+    x=GetFeature().MakeFeatures(pcap_path)
+    return predicts(x)  # true: safe file false: dangerous file
+
+def run(good_filename='train_test/goodx.csv',bad_filename='train_test/badx.csv'):
     goodx=GetFeature().MakeFeatures(good_filename)
     badx=GetFeature().MakeFeatures(bad_filename)
     goody = [1] * len(goodx)
     bady = [0] * len(badx)
-    # goody=np.zeros_like(goodx)
-    # bady=np.ones_like(badx)
 
     # min_max_scaler = preprocessing.MinMaxScaler()
     # X_train_minmax =min_max_scaler.fit_transform(bady)
@@ -110,29 +153,31 @@ def run():
     # 为使得数据平均分布，需要进行洗牌
     x,y=shuffle(x,y)
     train(x, y)
-    # testX =["<script>alert(1)</script>", "123123sadas","onloads2s", "scriptsad23asdasczxc","οnlοad=alert(1)"]
-    # x =MakeFeature(testX)
-    # for res, req in zip(predicts(x), testX):
-    #     print("XSS==>" if res == 1 else "None==>", req)
+
+def analysis(file_name,save_path,num_epoch=20,num_ev=50):
+    # 解析pcap流量包，并存储在save_path
+    warnings.filterwarnings("ignore")  
+    pcap_path=file_name
+    get_badx=GetBadx(save_path,pcap_path,num_epoch*num_ev)
+    get_badx.get()
+    # 预测
+    return bool(predicts_pcap(save_path))
 
 
+def main():
+    args=parse_args()
+    if args.ignore_warning:
+        warnings.filterwarnings("ignore")  # 忽略警告
+    if args.updata_goodset:
+        # 获取正样本
+        get_goodx=GetGoodx(args.good_dir,args.num_epoch,args.num_ev)
+        get_goodx.get()
+    if args.updata_badset:
+        # 获取负样本
+        get_badx=GetBadx(args.bad_dir,args.bad_pcap_dir,args.num_epoch*args.num_ev)
+        get_badx.get()  
+    if args.train:
+        run(args.good_dir,args.bad_dir)
 
 if __name__=="__main__":
-
-    warnings.filterwarnings("ignore")  # 忽略警告
-
-    good_filename='./goodx.csv'
-    bad_filename='./badx.csv'
-    bad_pcap_filename="../2018-05-03_win12.pcap"
-    num_epoch=20  # 获取正样本数据包的批数
-    num_ev=50     # 每批正样本数据包数量
-    # 获取正样本
-    get_goodx=GetGoodx(good_filename,num_epoch,num_ev)
-    get_goodx.get()
-    # 获取负样本
-    get_badx=GetBadx(bad_filename,bad_pcap_filename,num_epoch*num_ev)
-    get_badx.get()
-    # 获取特征，训练，预测
-    run()
-
-
+    main()

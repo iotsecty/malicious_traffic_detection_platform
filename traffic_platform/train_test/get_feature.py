@@ -112,11 +112,3 @@ if __name__=="__main__":
     filename='./goodx.csv'
     feature=GetFeature().MakeFeatures(filename)
     print(feature)
-
-
-
-
-
-
-
-

@@ -10,7 +10,7 @@ from  scapy.utils import corrupt_bytes
 from scapy.all import *
 
 # protocol目录
-PROTOCOL_PATH = './protocol'
+PROTOCOL_PATH = 'traffic_platform/train_test/protocol'
 
 
 # 监听的网卡，在vmware里的网卡一般是eth30或者eth20,windows系统下需要自己查找，也可以为设置为None
@@ -24,6 +24,7 @@ NEED_INSTALL = ['scapy']
 class PcapDecode:
     def __init__(self):
         # ETHER:读取以太网层协议配置文件
+        print('%s/ETHER' % PROTOCOL_PATH)
         with open('%s/ETHER' % PROTOCOL_PATH, 'r', encoding='UTF-8') as f:
             ethers = f.readlines()
         self.ETHER_DICT = {}

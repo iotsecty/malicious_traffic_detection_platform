@@ -21,6 +21,56 @@ The commonly used software encryption communication methods can be roughly divid
 |worm virus|C&C direct connection,worm propagation|
 |downloader|White stands hidden transfer,Others|
 
+### Manual 
+
+```
+malicious_traffic_detection_platform.traffic_platform
+  |
+  |_______ train_test   
+  |          |____ dataset
+  |          |          |____ badx.csv
+  |          |          |____ goodx.csv  
+  |          |____ protocol
+  |          |          |____ ETHER
+  |          |          |____ FILES
+  |          |          |____ IP
+  |          |          |____ PORT
+  |          |          |____ UDP
+  |          |          |____ TCP
+  |          |          |____ WARN
+  |          |____ safe_pcap (Folder)
+  |          |
+  |          |____ __init__.py
+  |          |____ main.py
+  |          |____ get_goodx.py
+  |          |____ get_badx.py
+  |          |____ get_feature.py
+  |          |____ 抓包协议分析器.py
+  |          |
+  |          |____ model.pkl
+  |_______ web_platform
+  |          |____ __init__.py
+  |          |____ runserver.py
+  |          |____ setting.py
+  |          |____ controller
+  |          |____ User_Info.sqlite3
+  |          |          |____ ————init__.py
+  |          |          |____ message.py
+  |          |____ pcap_test(Folder)
+  |          |____ static
+  |          |          |____ style.css
+  |          |____ tempaltes
+  |          |          |____ logout.html
+  |          |          |____ login.html
+  |          |          |____ show_entries.html
+  |          |          |____ show_error.html
+  |          |          |____ upload.html
+  |          |____ model
+  |          |          |____ Category.py
+  |          |          |____ User.py
+  |_______ model.pkl
+```
+
 ### Current Work
 
 1. Normal flow sample collection based on scapy（ getgoodx.py ）And the analysis of large-scale attack sample packets (pcap);
@@ -76,4 +126,4 @@ LICENSE
 -------
 MIT License
 
-Copyright (c) 2021 Xinmin Feng & Minyi Li
+Copyright (c) 2021 Xinmin Feng & Mingyi Li
