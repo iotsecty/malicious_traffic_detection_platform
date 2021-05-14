@@ -1,13 +1,14 @@
+
 <html>
 <head>
     <meta charset="UTF-8">
     <title>加密恶意流量监测平台@copyright xmfeng&myli</title>
     <link rel="stylesheet" href="../static/css/button.css">
 </head>
-    <form method="post">
         <div align="center" >
-            <a><h1>请重新检查文件类型和大小！</h1></a>
+            <a><h1><h1>{{content}}</h1></h1></a>
         </div>
+    <form action="{{ url_for('upload') }}" method="GET">
         <!-- <a href="#">点击返回提交文件页面</a> -->
         <button type="submit">点击此处返回</button>
     </form>

@@ -1,58 +1,128 @@
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-
-</html>
-
 <!DOCTYPE html>
 <html lang="Zh-CN">
-<head>
-  <meta charset="utf-8">
-  <title>加密恶意流量监测平台@copyright xmfeng&myli</title>
-  <!-- Link CSS -->
 
-  <!-- <link rel="stylesheet" href="../static/style23.css"> -->
-  <link rel="stylesheet" href="../static/style.css">
-  <link rel="stylesheet" type="text/css" href="../static/style42.css">
+  <head>
+    <meta charset="utf-8">
+    <title>加密恶意流量监测平台@copyright xmfeng&myli</title>
+    <!-- Link CSS -->
+    <!-- <link rel="stylesheet" href="../static/css/style08.css"> -->
+    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/demo.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style42.css">
+    <link rel="stylesheet" href="../static/css/style23.css">
+    <style> 
+      #file{
+        display: inline-block;
+      }
+      input.file{
+        display: block;
+				position: relative;
+				cursor: pointer;
+			    left: 50%;
+				   top: 70%;	
+           opacity: 256; 
+         }
+        p{
+          font-size: 16px;
+        }
+   </style>
 
-</head>
-
+  </head>
+  
 <body>
-    <div class="outer">
-        <div class="inner">
-                <h1 align="center">请上传pcap流量文件</h1>
-                <form action="/detection" method="post" enctype="multipart/form-data">
-                    <p align="center"><input type="file" name="file" accept=".jpg,.png,.zip,.tar.gz.pcap"/>
-                        <!-- <input type="submit" value="submit"/></p> -->
-                    <div>
-                        <div  class="btn">
-                            <div class="btn-back">
-                                <p>Are you sure you want to submit the file?</p>
-                                <button class="yes" type="submit">Yes</button>
-                                <button class='no' type='button' >No</button>
-                            </div>
-                            <div  class="btn-front">Submit</div>
-                            <script src="../static/somee.js"> </script>
+
+  <div class="flex-container">
+
+      <div id="header_tag">
+           <h1 align="center" >请上传pcap流量文件</h1>
+      </div>
+        <div class="main_tag">
+          <form action="{{ url_for('detection') }}" method="post" enctype="multipart/form-data">
+            <p align="center"  id="file" class="textarea">
+              <input type="file" name="file" accept=".jpg,.png,.zip,.tar.gz,.pcap" multiple="multiple" class="file" onchange="changefile(this.value)"/>
+            <!-- <script>
+              function changefile(x){
+                var change = document.getElementById("file");
+                change.innerText = x;
+                }
+            </script> -->
+            </p>
+                <!-- <input type="submit" value="submit"/></p> -->
+            <div align="center">
+                  <div  class="btn">
+                        <div  class="btn-front">Submit</div>
+                        <div class="btn-back">
+                          <p>Are you sure you want to submit the file?</p>
+                          <button class="yes" type="submit">Yes</button>
+                          <button class='no' type="button">No</button>
                         </div>
-                    </div>
-                    <h4 align="center">注意：上传的pcap文件名默认不支持中文命名,文件大小控制在10Mb之内</h4>
-                </form>
-                <!-- <div >
-                    <ul>
-                        <li><a href="#">首页</a></li>
-                        <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform/blob/master/README-CN.md">关于</a></li>
-                        <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform/blob/master/README-CN.md">服务与支持</a></li>
-                        <li><a href="#">团队</a></li>
-                        <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform">文件下载</a></li>
-                        <li><a href="xmfeng2000@126.com">联系我们</a></li>
-                    </ul>
-                </div> -->
-
-            </div>
+                        <script src="../static/js/somee.js"> </script>
+                  </div>
+             </div>
+             <h4 align="center">注意：请将上传的pcap文件大小控制在10Mb之内</h4>            
+          </form>
+        <!-- 提交按键 -->
         </div>
-    </div>
+        <!-- <div class="share_tag">
+          <ul>
+              <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+          </ul>
+        </div> -->
 
-</body>
-</html>
+<!-- 
+        <div class="share_tag">
+          <ul>
+              <li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+              <li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+          </ul>
+        </div> -->       
+
+      <div id="footer_tag" align="center">
+        <div  align="center">
+          <ul align="center">
+            <br><br>
+              <li><a href="#">首页</a></li>
+              <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform/blob/master/README-CN.md">关于</a></li>
+              <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform/blob/master/README-CN.md">服务与支持</a></li>
+              <li><a href="#">团队</a></li>
+              <li><a href="https://github.com/fengxinmin/malicious_traffic_detection_platform">文件下载</a></li>
+              <li><a href="xmfeng2000@126.com">联系我们</a></li>
+          </ul>
+        </div>
+        <h5 align="center"> Copyright @2021 xmfeng & myli</h5>
+      </div>     
+  </div>
+  <!-- <div id="nav">
+  <p>公布板块</p>
+  copyright @2021 xmfeng & xmli
+  </div> -->
+  
+  <!-- <div id="section">
+    <form action="/detection" method="post" enctype="multipart/form-data">
+      <p align="center"><input type="file" name="file" accept=".jpg,.png,.zip,.tar.gz,.pcap"/>
+          <div  class="btn">
+            <div class="btn-back">
+                <p>Are you sure you want to submit the file?</p>
+                <button class="yes" type="submit">Yes</button>
+                <button class='no' type='button' >No</button>
+            </div>
+            <div  class="btn-front">Submit</div>
+            <script src="../static/somee.js"> </script>
+        </div>
+      <h4 align="center">注意：上传的pcap文件名默认不支持中文命名,文件大小控制在10Mb之内</h4>
+  </form>
+  </div>
+  
+  <div id="footer">
+  Copyright W3School.com.cn
+  </div> -->
+  
+  </body>
+  </html>

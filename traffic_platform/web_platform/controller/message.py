@@ -22,37 +22,38 @@ def show_error():
         return render_template('show_error.html')
 
 @app.route('/detection',methods = ['POST','GET'])
-def upload_file():
+def detection():
     error=None 
     if request.method == 'POST':
-        # state=True
-        # state=request.form.get('state')
-        if True: # state=True 上传文件  False 取消上传文件
-            f = request.files["file"]
-            ftype=secure_filename(f.filename).split('.')[-1]
-            if ftype!='pcap':
-                # error='Invalid filetype'
-                flash ('请检查文件类型是否正确！')
-                return  redirect(url_for('show_error'))
-            else:
-                pcap_save_path=os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename))
-                csv_sava_path=os.path.join(app.config['UPLOAD_FOLDER'],'result.csv')
-                f.save(pcap_save_path) 
-                # # ===========MySQL存储方案（待完成）===================
-                # category = Category(username,filename)
-                # db.session.add(category)
-                # db.session.commit()
-                # session['upload']=True
-                flash('upload file is successfully saved !')
-                # return "upload file is successful!"
-                if analysis(pcap_save_path,csv_sava_path,num_epoch=5,num_ev=20):
-                    return render_template('result.html',content='The file is safe')
-                else:
-                    return render_template('result.html',content='The file is dangerous')
-                # 后续需要更改此处的逻辑，以更加合适的方式返回！！！！
-                return redirect(url_for('detection'))
+        try:
+            f = request.files.get('file')
+        except:
+            return redirect(url_for('show_error'))
+        ftype=secure_filename(f.filename).split('.')[-1]
+        if ftype!='pcap':
+            # error='Invalid filetype'
+            flash ('请检查文件类型是否正确！')
+            return  redirect(url_for('show_error'))
         else:
-            return redirect(url_for('upload'))
+            pcap_save_path=os.path.join(app.config['UPLOAD_FOLDER'],secure_filename(f.filename))
+            csv_sava_path=os.path.join(app.config['UPLOAD_FOLDER'],'result.csv')
+            f.save(pcap_save_path) 
+            # # ===========MySQL存储方案（待完成）===================
+            # category = Category(username,filename)
+            # db.session.add(category)
+            # db.session.commit()
+            # session['upload']=True
+            flash('upload file is successfully saved !')
+            # return "upload file is successful!"
+            if analysis(pcap_save_path,csv_sava_path,num_epoch=5,num_ev=20):
+                return render_template('result.html',content='The file is safe')
+            else:
+                return render_template('result.html',content='The file is dangerous')
+            # 后续需要更改此处的逻辑，以更加合适的方式返回！！！！
+            return redirect(url_for('detection'))
+    elif request.method=="GET":
+        return redirect(url_for('upload'))
+
 
 @app.route('/result',methods=['POST','GET'])
 def result():

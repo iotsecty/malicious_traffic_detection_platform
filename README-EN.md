@@ -8,7 +8,7 @@ Name:Encryption malicious traffic analysis and testing platform
 With the popularity of HTTPS in recent years, the proportion of encrypted malicious traffic attacks is gradually increasing. According to the report, at present, the malware for encrypted communication has basically covered all types of attacks, such as Trojan horse, blackmail software, infective, worm virus, downloader, etc. among them, the malware family of Trojan horse and downloader accounts for a relatively high proportion.
 
 
- ![The proportion of malware](./Pictures/PieChart.png)
+ ![The proportion of malware](ImageForReadme/PieChart.png)
 
 The commonly used software encryption communication methods can be roughly divided into six types:
 

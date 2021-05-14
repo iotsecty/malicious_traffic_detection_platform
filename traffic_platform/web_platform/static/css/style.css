@@ -20,12 +20,19 @@ h2              { font-size: 1.2em; }
 .outer {
 	width: 300px;
 	height: 300px;
-	border: 1px solid #f00;
+	/* border: 1px solid #f00; */
 	display: table;
 }
 .inner {
 	display: table-cell;
 	vertical-align: middle;
-	border: 1px solid #777;
+	/* border: 1px solid #777; */
 	text-align: center;
+}
+
+#header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
 }

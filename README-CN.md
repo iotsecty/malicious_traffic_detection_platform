@@ -1,14 +1,14 @@
 项目工程介绍
 ----------
-软件名称：加密恶意流量分析与检测平台
+软件名称：基于机器学习的加密恶意流量分析与检测平台
 
-维护状态：更新中
+维护状态：**持续更新中**
 
 ### 背景介绍
 
 随着近年来HTTPS的普及，加密恶意流量攻击的比例也在逐渐提升。根据报告,目前加密通信的恶意软件基本已经覆盖所有的攻击类型，例如特洛伊木马、勒索软件、感染式、蠕虫病毒、下载器等，其中特洛伊木马和下载器类的恶意软件家族占比较高。
 
- ![The proportion of malware](./Pictures/PieChart.png)
+ ![The proportion of malware](ImageForReadme/PieChart.png)
 
 常用的软件加密通信方式，可以粗略地分为六种：
 
@@ -60,13 +60,18 @@ malicious_traffic_detection_platform.traffic_platform
   |          |____ User_Info.sqlite3  (MySQL)
   |          |____ pcap_test(测试pcap文件夹)
   |          |____ static (静态文件)
-  |          |          |____ style.css
+  |          |          |____ css(Folder)
+  |          |          |____ fonts(Folder)
+  |          |          |____ js(Folder)
   |          |____ tempaltes (模板)
   |          |          |____ logout.html
   |          |          |____ login.html
   |          |          |____ show_entries.html
   |          |          |____ show_error.html
   |          |          |____ upload.html
+  |          |          |____ button.html
+  |          |          |____ wait.html
+  |          |          |____ result.html
   |          |____ model (SQL)
   |          |          |____ Category.py
   |          |          |____ User.py
@@ -117,6 +122,22 @@ malicious_traffic_detection_platform.traffic_platform
 
 其中，综合效果最好的方法是随机森林算法,F1得分稳定在90%以上,这和[文献](https://blog.riskivy.com/%e5%9f%ba%e4%ba%8e%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%e7%9a%84%e6%81%b6%e6%84%8f%e8%bd%af%e4%bb%b6%e5%8a%a0%e5%af%86%e6%b5%81%e9%87%8f%e6%a3%80%e6%b5%8b/)所说的是相同的。
 
+**用户界面&操作逻辑（测试环境为Chrome 90.0.4430.212（64 位）版本）**
+
+主界面：选择文件并点击submit，二次确认上传文件
+
+![主界面](ImageForReadme/PtSc1.png)
+
+![二次确认](./ImageForReadme/PtSc2.png)
+
+
+后台会对文件大小和类型进行筛选，对于大小超过10MB或非pcap文件返回**请重新检查文件类型和大小**,点击返回键回到主页面（之所以限定10MB，主要是受限于目前的服务器性能，不能承受大流量高并发的需求，后续会进行改进）
+
+![文件大小/类型不合法](./ImageForReadme/PtSc3.png)
+
+当正确上传文件之后，系统会自动调用已训练好的模型和analysis函数（目前需要在内部输入抓取流量包的数量，后续会增加图形化界面的参数输入），并返回流量包是否正常（如下图所示）
+
+![输出预测结果](./ImageForReadme/PtSc4.png)
 
 ### 亮点
 
@@ -161,6 +182,8 @@ flask,flask_sqlalchemy
 1. 如果你想运行正负样本数据包采集的代码(getgoodx.py,getbadx.py),你可能需要先下载winpcap软件，这个软件非常容易下载安装，当然你可以使用其他可以接获流量包的软件。
 
 2. 将traffic_platform\web_platform\setting.py 添加到环境变量 FLASKR_SETTINGS
+
+3. 前端仅支持HTML5,尚未对更低版本兼容
 
 ```
 
