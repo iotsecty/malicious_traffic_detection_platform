@@ -1,5 +1,5 @@
-项目工程介绍
-----------
+# README
+
 软件名称：基于机器学习的加密恶意流量分析与检测平台
 
 维护状态：**持续更新中**
@@ -83,21 +83,22 @@ malicious_traffic_detection_platform.traffic_platform
     1. cd到traffic_platform目录下
     
     2. 键入 python -m traffic_platform.train_test.main  --train --updata_goodset=True --updata_badset=True
- 
+
  模型预测结果（不需训练）：
- 
+
     1. cd到traffic_platform目录下
     
     2. 键入 python -m traffic_platform.train_test.main  --train
-    
+
  基于Flask的流量监测平台
- 
+
     1. cd到traffic_platform目录下
     
     2. 键入python -m traffic_platform.web_platform.runserver
-    
+
    
-    
+
+
 ### 当前的工作结果
 
 1. 基于Scapy的正常流量样本的采集（getgoodx.py）,以及对于大规模攻击样本数据包的解析(pcap);
@@ -118,9 +119,8 @@ malicious_traffic_detection_platform.traffic_platform
 |linear regression|88.25|88.89|
 |linerSVC|77.13|81.57|
 |多项式贝叶斯|64.25|67.27|
-|svc-rbf|42.98|34.03|
 
-其中，综合效果最好的方法是随机森林算法,F1得分稳定在90%以上,这和[文献](https://blog.riskivy.com/%e5%9f%ba%e4%ba%8e%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%e7%9a%84%e6%81%b6%e6%84%8f%e8%bd%af%e4%bb%b6%e5%8a%a0%e5%af%86%e6%b5%81%e9%87%8f%e6%a3%80%e6%b5%8b/)所说的是相同的。
+其中，综合效果最好的方法是随机森林算法,F1得分稳定在90%以上,这和[文献](https://blog.riskivy.com/%e5%9f%ba%e4%ba%8e%e6%9c%ba%e5%99%a8%e5%ad%a6%e4%b9%a0%e7%9a%84%e6%81%b6%e6%84%8f%e8%bd%af%e4%bb%b6%e5%8a%a0%e5%af%86%e6%b5%81%e9%87%8f%e6%a3%80%e6%b5%8b/)所说的是相同的，当然这其实与我们的业务场景密切相关。
 
 **用户界面&操作逻辑（测试环境为Chrome 90.0.4430.212（64 位）版本）**
 
@@ -151,10 +151,10 @@ malicious_traffic_detection_platform.traffic_platform
 
 ### Todolsit
 
-- [ ]  支持自定义神经网络模型(Deep is all you need?)
-- [ ]  不限于业界常用的关键词检测,加入NLP的情感分析工具,例如NLTK等方法,更好的体现统计特性
-- [ ]  更大规模的数据集的训练,支持关系型数据库,例如MySQL
-- [x]  基于Flask框架的前端检测页面
+- [ ]   支持自定义神经网络模型（基于深度的方法目前还不是很成熟），完善集成学习模型，并针对不同的应用场景给出不同的部署建议
+- [ ]   不限于业界常用的关键词检测和TF特征,加入NLP的情感分析工具,例如NLTK等方法,更好的体现统计特性
+- [ ]  完善数据库，支持高并发
+- [ ]  更友好的交互方式（增加留言板、用户登录）
 
 
 If you have any question or suggestion, Please email us :)
@@ -181,11 +181,13 @@ flask,flask_sqlalchemy
  ```
 1. 如果你想运行正负样本数据包采集的代码(getgoodx.py,getbadx.py),你可能需要先下载winpcap软件，这个软件非常容易下载安装，当然你可以使用其他可以接获流量包的软件。
 
-2. 将traffic_platform\web_platform\setting.py 添加到环境变量 FLASKR_SETTINGS
+2. 恶意流量文件需要自行下载到traffic_platform/train_test/danger_pcap下，并在运行命令后新增加 --bad_pcap_dir=恶意流量文件地址
+
+3. 将traffic_platform\web_platform\setting.py 添加到环境变量 FLASKR_SETTINGS
 
 3. 前端仅支持HTML5,尚未对更低版本兼容
 
-```
+ ```
 
 
 联系方式

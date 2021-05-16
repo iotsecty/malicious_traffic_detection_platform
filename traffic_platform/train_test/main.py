@@ -61,6 +61,7 @@ def validate_args(args):
     print('validating arguments...')
     pprint.pprint(args.__dict__)
     if args.updata_badset:
+        print(args.bad_pcap_dir)
         assert os.path.exits(args.bad_pcap_dir),'请检查恶意流量pcap文件是否存在'
 
 
